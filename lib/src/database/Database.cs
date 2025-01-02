@@ -28,6 +28,22 @@ public abstract class Database : IDisposable
     where V : notnull
     => new(liteDatabase, tableName, cacheSize);
 
+  public T PerformRead<T>(Func<T> func)
+  {
+    ThrowIfDisposed();
+    ThrowIfClosed();
+
+    return LockRead(() => func());
+  }
+
+  public void PerformWrite(Action action)
+  {
+    ThrowIfDisposed();
+    ThrowIfClosed();
+
+    LockWrite(() => action());
+  }
+
   public void Open()
   {
     ThrowIfDisposed();
@@ -81,22 +97,6 @@ public abstract class Database : IDisposable
   }
 
   protected abstract void ReloadRepositiories();
-
-  protected T PerformRead<T>(Func<T> func)
-  {
-    ThrowIfDisposed();
-    ThrowIfClosed();
-
-    return LockRead(() => func());
-  }
-
-  protected void PerformWrite(Action action)
-  {
-    ThrowIfDisposed();
-    ThrowIfClosed();
-
-    LockWrite(() => action());
-  }
 
   protected virtual void Dispose(bool disposing)
   {

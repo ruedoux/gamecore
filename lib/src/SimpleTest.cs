@@ -1,6 +1,3 @@
-#pragma warning disable IL2067
-#pragma warning disable IL2026
-#pragma warning disable IL2070
 using System.Reflection;
 using GameCore;
 using System.Diagnostics;
@@ -37,6 +34,11 @@ public record SimpleTestClassResult(
   long TookMiliseconds,
   string[] Messages);
 
+// This really doesnt matter since tests will not be included in the release build,
+// or it can simply be marked to not trim test classes.
+#pragma warning disable IL2067
+#pragma warning disable IL2026
+#pragma warning disable IL2070
 public class SimpleTestRunner
 {
   public List<SimpleTestClassResult> ClassResults = new();
@@ -154,6 +156,9 @@ public class SimpleTestRunner
   private static string[] ConvertExceptionToStringArray(Exception ex)
     => ex.ToString().Split(new[] { Environment.NewLine }, StringSplitOptions.None);
 }
+#pragma warning restore IL2067
+#pragma warning restore IL2026
+#pragma warning restore IL2070
 
 public static class SimpleEqualsVerifier
 {
@@ -196,6 +201,3 @@ public sealed class SimpleTestDirectory : IDisposable
     Delete();
   }
 }
-#pragma warning restore IL2067
-#pragma warning restore IL2026
-#pragma warning restore IL2070

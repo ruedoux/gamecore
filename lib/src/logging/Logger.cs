@@ -126,6 +126,14 @@ public class Logger
       return $"[{string.Join(", ", elements)}]";
     }
 
+    if (msg is IEnumerable enumerable && !(msg is string))
+    {
+      var elements = new List<string>();
+      foreach (var item in enumerable)
+        elements.Add(ParseAsString(item));
+      return $"[{string.Join(", ", elements)}]";
+    }
+
     return msg.ToString() ?? NULL_STRING;
   }
 

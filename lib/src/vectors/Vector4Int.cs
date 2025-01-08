@@ -114,81 +114,41 @@ public readonly struct Vector4Int
   }
 }
 
+public class Vector4IntConverter : JsonConverter<Vector4Int>
+{
+  public override Vector4Int Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+  {
+    if (reader.TokenType != JsonTokenType.String)
+      throw new JsonException("Expected string token");
+
+    var stringValue = reader!.GetString()
+      ?? throw new JsonException("Token is null");
+
+    return Vector4Int.FromString(stringValue);
+  }
+
+  public override void Write(Utf8JsonWriter writer, Vector4Int value, JsonSerializerOptions options)
+    => writer.WriteStringValue(value.ToString());
+}
+
 
 public class Vector4IntDictionaryConverter<TValue> : JsonConverter<Dictionary<Vector4Int, TValue>>
 {
   public override Dictionary<Vector4Int, TValue> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-  {
-    var dictionary = new Dictionary<Vector4Int, TValue>();
-    var typeInfo = (JsonTypeInfo<TValue>)options.GetTypeInfo(typeof(TValue));
-
-    if (reader.TokenType != JsonTokenType.StartObject)
-      throw new JsonException();
-
-    while (reader.Read())
-    {
-      if (reader.TokenType == JsonTokenType.EndObject)
-        return dictionary;
-
-      string key = reader.GetString() ?? throw new JsonException();
-      reader.Read();
-      TValue value = JsonSerializer.Deserialize<TValue>(ref reader, typeInfo) ?? throw new JsonException();
-      dictionary.Add(Vector4Int.FromString(key), value);
-    }
-
-    throw new JsonException();
-  }
+  => JsonSerialization.ReadDictionary<Vector4Int, TValue>(
+      ref reader, typeToConvert, options, Vector4Int.FromString);
 
   public override void Write(Utf8JsonWriter writer, Dictionary<Vector4Int, TValue> value, JsonSerializerOptions options)
-  {
-    writer.WriteStartObject();
-    var typeInfo = (JsonTypeInfo<TValue>)options.GetTypeInfo(typeof(TValue));
-
-    foreach (var kvp in value)
-    {
-      writer.WritePropertyName(kvp.Key.ToString());
-      JsonSerializer.Serialize(writer, kvp.Value, typeInfo);
-    }
-
-    writer.WriteEndObject();
-  }
+    => JsonSerialization.Write(writer, value, options, (k) => k.ToString());
 }
+
 
 public class Vector4IntImmutableDictionaryConverter<TValue> : JsonConverter<ImmutableDictionary<Vector4Int, TValue>>
 {
   public override ImmutableDictionary<Vector4Int, TValue> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-  {
-    var dictionary = new Dictionary<Vector4Int, TValue>();
-    var typeInfo = (JsonTypeInfo<TValue>)options.GetTypeInfo(typeof(TValue));
-
-    if (reader.TokenType != JsonTokenType.StartObject)
-      throw new JsonException();
-
-    while (reader.Read())
-    {
-      if (reader.TokenType == JsonTokenType.EndObject)
-        return dictionary.ToImmutableDictionary();
-
-      string key = reader.GetString() ?? throw new JsonException();
-      reader.Read();
-      TValue value = JsonSerializer.Deserialize<TValue>(ref reader, typeInfo) ?? throw new JsonException();
-      dictionary.Add(Vector4Int.FromString(key), value);
-    }
-
-    throw new JsonException();
-  }
+    => JsonSerialization.ReadImmutableDictionary<Vector4Int, TValue>(
+      ref reader, typeToConvert, options, Vector4Int.FromString);
 
   public override void Write(Utf8JsonWriter writer, ImmutableDictionary<Vector4Int, TValue> value, JsonSerializerOptions options)
-  {
-    writer.WriteStartObject();
-    var typeInfo = (JsonTypeInfo<TValue>)options.GetTypeInfo(typeof(TValue));
-
-    foreach (var kvp in value)
-    {
-      writer.WritePropertyName(kvp.Key.ToString());
-      JsonSerializer.Serialize(writer, kvp.Value, typeInfo);
-    }
-
-    writer.WriteEndObject();
-  }
+    => JsonSerialization.Write(writer, value, options, (k) => k.ToString());
 }

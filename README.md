@@ -17,20 +17,25 @@ Wrote tests for most important parts of the library to ensure they work as expec
 
 ## Installation
 
-Can be added to a project as a git submodule and then referenced using dotnet, example:
+### Manual reference to .csproj for git project
+
+Add the submodule outside of your .csproj file, example:
 
 ```bash
-git submodule add <link to this repo>
+# Add submodule to your project
+git submodule add https://github.com/ruedoux/gamecore
 git submodule update --init --recursive
-cd your/project/path
+
+# Go to your main project path and reference the submodule
+cd /your/project/path
 dotnet add reference ../path/to/gamecore/lib/gamecore.csproj
 ```
 
-Or can be compiled as a dll and then referenced in the project:
+### Manual reference to dll
 
 ```bash
 # Create release .dll
-git clone <link to this repo>
+git clone https://github.com/ruedoux/gamecore
 cd gamecore/lib
 dotnet build -c Release
 

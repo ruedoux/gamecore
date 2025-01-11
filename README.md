@@ -28,7 +28,7 @@ git submodule update --init --recursive
 
 # Go to your main project path and reference the submodule
 cd /your/project/path
-dotnet add reference ../path/to/gamecore/lib/gamecore.csproj
+dotnet add reference ../path/to/gamecore/lib/GameCore.csproj
 ```
 
 ### Manual reference to dll
@@ -41,5 +41,5 @@ dotnet build -c Release
 
 # Add dll to the project
 cd /path/to/the/project
-dotnet add package /path/to/compiled/gamecore.dll
+dotnet add package /path/to/compiled/GameCore.dll
 ```
